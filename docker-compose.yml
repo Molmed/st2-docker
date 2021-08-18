@@ -132,6 +132,8 @@ services:
       # templates) can reference secrets
       - stackstorm-keys:/etc/st2/keys:ro
     dns_search: .
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   st2garbagecollector:
     image: ${ST2_IMAGE_REPO:-stackstorm/}st2garbagecollector:${ST2_VERSION:-latest}
     restart: on-failure
@@ -221,6 +223,8 @@ services:
       - ${ST2_PACKS_DEV:-./packs.dev}:/opt/stackstorm/packs.dev:rw
       - ./files/st2-cli.conf:/root/.st2/config
       - ./scripts/st2client-startup.sh:/st2client-startup.sh
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   st2chatops:
     image: ${ST2_IMAGE_REPO:-stackstorm/}st2chatops:${ST2_VERSION:-latest}
     restart: on-failure:5
@@ -245,7 +249,7 @@ services:
       # for the full list of supported adapters and example ENV variables.
       HUBOT_ADAPTER: ${HUBOT_ADAPTER:-slack}
       HUBOT_LOG_LEVEL: ${HUBOT_LOG_LEVEL:-debug}
-      HUBOT_SLACK_TOKEN: ${HUBOT_SLACK_TOKEN:-}
+      HUBOT_SLACK_TOKEN: ${HUBOT_SLACK_TOKEN:-""}
     volumes:
       - ./scripts/st2chatops-startup.sh:/st2chatops-startup.sh
     dns_search: .
