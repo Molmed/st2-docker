@@ -131,7 +131,6 @@ services:
       # Action runner needs access to keys since action definitions (Jinja
       # templates) can reference secrets
       - stackstorm-keys:/etc/st2/keys:ro
-    dns_search: .
     extra_hosts:
       - "host.docker.internal:host-gateway"
   st2garbagecollector:
