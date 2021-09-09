@@ -3,6 +3,24 @@
 counter=0
 backoff=10
 
+# Install dependencies
+apt-get update && apt-get install -y gcc curl vim
+
+# Install snpseq-packs
+ln -fns /opt/stackstorm/packs.dev /opt/stackstorm/packs/snpseq_packs
+
+# Copy dummy genologics config to home of root user (required for unit tests)
+cp /opt/stackstorm/packs/snpseq_packs/utils/.genologicsrc /root/
+
+# Load snpseq_packs packs
+st2 run packs.load packs=snpseq_packs
+
+# Make virtualenv for snpseq_packs
+st2 run packs.setup_virtualenv packs=snpseq_packs
+
+# Make sure config is loaded
+st2ctl reload --register-configs
+
 # st2client startup and registration
 while [ "$counter" -lt 5 ]; do
   ACTIONS=$(st2 action list)

@@ -118,6 +118,7 @@ services:
     depends_on:
       - redis
       - st2api
+    command: /st2actionrunner-startup.sh
     networks:
       - private
     volumes:
@@ -131,6 +132,8 @@ services:
       # Action runner needs access to keys since action definitions (Jinja
       # templates) can reference secrets
       - stackstorm-keys:/etc/st2/keys:ro
+      - ./scripts/st2actionrunner-startup.sh:/st2actionrunner-startup.sh
+    dns_search: .
     extra_hosts:
       - "host.docker.internal:host-gateway"
   st2garbagecollector:
