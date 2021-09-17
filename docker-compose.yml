@@ -118,7 +118,6 @@ services:
     depends_on:
       - redis
       - st2api
-    command: /st2actionrunner-startup.sh
     networks:
       - private
     volumes:
@@ -132,8 +131,9 @@ services:
       # Action runner needs access to keys since action definitions (Jinja
       # templates) can reference secrets
       - stackstorm-keys:/etc/st2/keys:ro
-      - ./scripts/st2actionrunner-startup.sh:/st2actionrunner-startup.sh
-    dns_search: .
+    # Note: on some environments, there may be connectivity issues between containers.
+    # In this case, try uncommenting the following line and restarting with docker-compose.
+    # dns_search: .
     extra_hosts:
       - "host.docker.internal:host-gateway"
   st2garbagecollector:
@@ -221,10 +221,12 @@ services:
       - stackstorm-keys:/etc/st2/keys:ro
       - stackstorm-packs-configs:/opt/stackstorm/configs:rw
       - stackstorm-packs:/opt/stackstorm/packs:rw
+      - stackstorm-virtualenvs:/opt/stackstorm/virtualenvs:rw
       - ./files/rbac:/opt/stackstorm/rbac:rw
       - ${ST2_PACKS_DEV:-./packs.dev}:/opt/stackstorm/packs.dev:rw
       - ./files/st2-cli.conf:/root/.st2/config
       - ./scripts/st2client-startup.sh:/st2client-startup.sh
+      - ./scripts/st2snpseqpacks-startup.sh:/st2snpseqpacks-startup.sh
     extra_hosts:
       - "host.docker.internal:host-gateway"
   st2chatops:
