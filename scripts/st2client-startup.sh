@@ -15,7 +15,6 @@ while [ "$counter" -lt 5 ]; do
     echo "No packs registered, will register"
     st2 pack register
   else
-    source /st2snpseqpacks-startup.sh
     echo "actions found st2client ready"
     sleep infinity
   fi

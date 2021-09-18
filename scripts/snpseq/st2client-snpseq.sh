@@ -1,7 +1,7 @@
 #!/bin/bash
 
-## Install dependencies
-apt-get update && apt-get install -y gcc curl vim python
+# Install dependencies
+apt-get update && apt-get install -y gcc curl vim
 
 ## Install snpseq-packs
 ln -fns /opt/stackstorm/packs.dev /opt/stackstorm/packs/snpseq_packs

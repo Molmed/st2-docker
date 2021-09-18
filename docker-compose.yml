@@ -131,6 +131,7 @@ services:
       # Action runner needs access to keys since action definitions (Jinja
       # templates) can reference secrets
       - stackstorm-keys:/etc/st2/keys:ro
+      - ./scripts/snpseq/st2actionrunner-snpseq.sh:/st2actionrunner-snpseq.sh
     # Note: on some environments, there may be connectivity issues between containers.
     # In this case, try uncommenting the following line and restarting with docker-compose.
     # dns_search: .
@@ -226,7 +227,7 @@ services:
       - ${ST2_PACKS_DEV:-./packs.dev}:/opt/stackstorm/packs.dev:rw
       - ./files/st2-cli.conf:/root/.st2/config
       - ./scripts/st2client-startup.sh:/st2client-startup.sh
-      - ./scripts/st2snpseqpacks-startup.sh:/st2snpseqpacks-startup.sh
+      - ./scripts/snpseq/st2client-snpseq.sh:/st2client-snpseq.sh
     extra_hosts:
       - "host.docker.internal:host-gateway"
   st2chatops:

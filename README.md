@@ -7,7 +7,7 @@ This docker-compose is provided as a way to allow "get up and running" quickly w
 ## TL;DR
 
 ```shell
-docker-compose up -d
+docker-compose up -d && ./scripts/snpseq/startup.sh # this starts the containers and installs snpseq_packs
 docker-compose exec st2client bash  # this gives you access to the st2 command line
 ```
 
@@ -17,8 +17,8 @@ Open `http://localhost/` in your browser. StackStorm Username/Password by defaul
 
 ### Prerequisites
 
-- Docker Engine 18.09+
-- Docker Compose 1.12+
+- [Docker Engine](https://www.docker.com/products/container-runtime) 20.04+
+- [Docker Compose](https://docs.docker.com/compose/install) 1.12+
 
 ### Compose Configuration
 
@@ -119,6 +119,11 @@ To stop the docker environment, run:
 
 ```shell
 docker-compose down
+```
+
+If you make changes to docker-compose.yml you may want to ensure that old volumes etc. are removed:
+```shell
+docker-compose down --remove-orphans -v
 ```
 
 ### Gotchas
