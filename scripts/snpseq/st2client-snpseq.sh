@@ -26,3 +26,6 @@ ln -fs /opt/stackstorm/packs.dev/snpseq_packs.yaml /opt/stackstorm/configs/snpse
 
 ## Make sure config is loaded
 st2ctl reload --register-configs
+
+## Make sure rules are disabled
+/opt/stackstorm/packs/snpseq_packs/scripts/rule_switch disable
