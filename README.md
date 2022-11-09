@@ -1,5 +1,6 @@
 # StackStorm in Docker Compose
-[![Circle CI Build Status](https://circleci.com/gh/StackStorm/st2-docker/tree/master.svg?style=shield)](https://circleci.com/gh/StackStorm/st2-docker)
+
+[![CI Build Status](https://github.com/StackStorm/st2-docker/actions/workflows/st2-docker.yml/badge.svg)](https://github.com/StackStorm/st2-docker/actions/workflows/st2-docker.yml)
 
 This docker-compose is provided as a way to allow "get up and running" quickly with StackStorm using Docker (based on [st2-dockerfiles](https://github.com/stackstorm/st2-dockerfiles)). It is not designed to be used in production, but rather a way to test out StackStorm and facilitate pack development.
 > If you need Highly Availability experience, there is Kubernetes installation available via Helm charts at https://docs.stackstorm.com/install/k8s_ha.html.
@@ -36,7 +37,7 @@ The image version, exposed ports, chatops, and "packs.dev" directory are configu
 
 The `files/htpasswd` file is provided with a default username of `st2admin` and a default password of `Ch@ngeMe`. This can be changed using the [htpasswd utility](https://httpd.apache.org/docs/2.4/programs/htpasswd.html).
 
-Another file (`files/st2-cli.conf`) contains default credentials and is mounted into the "st2client" container. If you change credentials in htpasswd, you will probably want to change them in `st2-cli.conf`.  
+Another file (`files/st2-cli.conf`) contains default credentials and is mounted into the "st2client" container. If you change credentials in htpasswd, you will probably want to change them in `st2-cli.conf`.
 
 ### Further configuration
 
@@ -58,10 +59,18 @@ Chatops settings are configured in the `environment` section for the `st2chatops
 Set `ST2_CHATOPS_ENABLE` to any non-zero value, then edit the various `HUBOT_` variables specific to your chatops adapter.
 See https://github.com/StackStorm/st2chatops/blob/master/st2chatops.env for the full list of supported adapters and example ENV variables.
 
+You will also need an st2 API key for chatops.  This should be set in `ST2_API_KEY`.
+
+To generate an API key, see the [StackStorm documentation](https://docs.stackstorm.com/authentication.html#api-keys).
+
+_Note:_ If you are standing up st2 for the first time, you may first need to start with chatops initially disabled so you can generate
+an API key.  Once this is done, set it in `ST2_API_KEY`, enable chatops as per above and `docker-compose restart` to
+restart your st2 stack.
+
 #### RBAC Configuration
 
 Starting with v3.4.0 RBAC is now included, but not enabled, by default. There are some default assignments, mappings, and roles
-that ship with st2-docker. All the configuration files for RBAC are kept in `./files/rbac`. 
+that ship with st2-docker. All the configuration files for RBAC are kept in `./files/rbac`.
 Consult the [st2 RBAC documentation](https://docs.stackstorm.com/rbac.html) for further information.
 
 To enable RBAC you can edit st2.user.conf and add the following options:
@@ -251,7 +260,7 @@ First, find the actual container name of st2api by running `docker-compose ps st
 
 ```shell
 $ docker-compose ps st2api
-      Name                    Command               State    Ports  
+      Name                    Command               State    Ports
 --------------------------------------------------------------------
 compose_st2api_1   /opt/stackstorm/st2/bin/st ...   Up      9101/tcp
 ```
@@ -377,7 +386,7 @@ docker-compose down --remove-orphans -v
 
 # Testing
 
-Testing st2-docker is now powered by [BATS](https://github.com/sstephenson/bats) Bash Automated Testing System. 
+Testing st2-docker is now powered by [BATS](https://github.com/sstephenson/bats) Bash Automated Testing System.
 A "sidecar" like container loads the BATS libraries and binaries into a st2client-like container to run the tests
 
 To run the tests
