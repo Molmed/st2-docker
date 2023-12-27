@@ -30,3 +30,7 @@ st2ctl reload --register-configs
 
 ## Make sure rules are disabled
 /opt/stackstorm/packs/snpseq_packs/scripts/rule_switch disable
+
+# create the known_hosts file and add the tester host key
+ssh-keyscan -t ecdsa tester >> /home/stanley/.ssh/known_hosts
+chown -R stanley:stanley /home/stanley/.ssh
