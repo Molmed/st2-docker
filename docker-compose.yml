@@ -271,14 +271,14 @@ services:
       - private
     volumes:
       - stackstorm-redis:/data
-  tester:
+  snpseq-tester:
     build:
       context: ../
-      dockerfile: st2-docker/files/Dockerfile.tester
+      dockerfile: st2-docker/files/Dockerfile.snpseq-tester
     networks:
       - private
     volumes:
-      - "./files/nginx.tester.conf:/etc/nginx/nginx.conf"
+      - "./files/nginx.snpseq-tester.conf:/etc/nginx/nginx.conf"
       - stackstorm-data:/data
       - stackstorm-ssh:/mnt/ssh
 volumes:
