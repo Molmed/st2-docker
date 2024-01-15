@@ -1,0 +1,72 @@
+FROM nginx:latest
+
+COPY tests/test_data/runfolders /data/snpseq-tester/runfolders
+
+# set up ssh access
+RUN \
+  apt-get update && \
+  apt-get install -y openssh-server bash rsync && \
+  mkdir -p /mnt/ssh && \
+  mkdir -p /data && \
+  ssh-keygen -f /mnt/ssh/id_rsa && \
+  cat /mnt/ssh/id_rsa.pub > /mnt/ssh/authorized_keys && \
+  echo "snpseq-tester $(cat /etc/ssh/ssh_host_ecdsa_key.pub)" > /mnt/ssh/known_hosts && \
+  cp /mnt/ssh/id_rsa /mnt/ssh/stanley_rsa && \
+  cp /mnt/ssh/id_rsa.pub /mnt/ssh/stanley_rsa.pub && \
+  chmod 0600 /mnt/ssh/* && \
+  useradd -m -U arteria && \
+  useradd -m seqsum -g arteria && \
+  useradd -m funk_901 -g arteria && \
+  useradd -m stanley -g arteria && \
+  mkdir -p /home/arteria/.ssh && \
+  cp /mnt/ssh/* /home/arteria/.ssh/ && \
+  chown -R arteria:arteria /home/arteria/.ssh && \
+  cp -r /home/arteria/.ssh /home/seqsum/ && \
+  cp -r /home/arteria/.ssh /home/funk_901/ && \
+  cp -r /home/arteria/.ssh /home/stanley/ && \
+  chown -R seqsum:arteria /home/seqsum/.ssh && \
+  chown -R funk_901:arteria /home/funk_901/.ssh && \
+  chown -R stanley:arteria /home/stanley/.ssh
+
+# set up directories
+RUN \
+  mkdir -p /mnt/seqsummaries/test/2021 && \
+  mkdir -p /mnt/seqsummaries/test/LIMS-integration && \
+  mkdir -p /mnt/seqsummaries/test/ngi_reports && \
+  mkdir -p /mnt/samplesheet_processning && \
+  mkdir -p /data/labdata && \
+  mkdir -p /data/scratch && \
+  mkdir -p /data/uppmax_project/incoming/staging/reports && \
+  mkdir -p /data/snpseq-tester/runfolders/Arkiverade && \
+  mkdir -p /data/olink && \
+  mkdir -p /var/log/nginx/ && \
+  mkdir -p /etc/arteria/misc/ && \
+  touch /var/log/nginx/access.log && \
+  echo '*' > /etc/arteria/misc/summary.rsync && \
+  echo '*' > /etc/arteria/misc/hiseq.rsync && \
+  bash -c 'find /data/snpseq-tester/runfolders -maxdepth 2 -name "*SampleSheet.csv" |while read f; do n=$(echo $(basename $(dirname $f)) |rev |cut -f1 -d_ |rev); n=${n:1}; cp $f /mnt/samplesheet_processning/${n}_samplesheet.csv; done' && \
+  bash -c 'find /data/snpseq-tester/runfolders -maxdepth 1 -type d |while read d; do n=$(basename $d); touch /data/scratch/$n; touch /data/snpseq-tester/runfolders/${n}_archive; done' && \
+  cp /mnt/samplesheet_processning/*.csv /data/ && \
+  ln -s /usr/bin/echo /usr/local/bin/projman_filler && \
+  chgrp -R arteria /mnt/samplesheet_processning && \
+  chgrp -R arteria /mnt/seqsummaries && \
+  chgrp -R arteria /data && \
+  chmod -R g+srwX /mnt/samplesheet_processning && \
+  chmod -R g+srwX /mnt/seqsummaries && \
+  chmod -R g+srwX /data
+
+# set up start script
+RUN \
+  printf \
+    "#! /usr/bin/env bash\n%s\n%s\n%s\n%s\n%s\n" \
+      'service ssh start' \
+      'service nginx start' \
+      'mv /data/snpseq-tester/runfolders/Arkiverade/* /data/snpseq-tester/runfolders/ || echo ""' \
+      'find /data/snpseq-tester/runfolders -maxdepth 1 -type d |while read d; do n=$(basename $d); touch /data/scratch/$n; done' \
+      'tail -f /var/log/nginx/access.log' \
+      > /root/start.sh && \
+  chmod +x /root/start.sh
+
+EXPOSE 22 4444 8345 10400 10500 10600 10800 10900
+
+CMD ["/root/start.sh"]

@@ -94,6 +94,7 @@ services:
       - ./files/st2.docker.conf:/etc/st2/st2.docker.conf:ro
       - ./files/st2.user.conf:/etc/st2/st2.user.conf:ro
       - stackstorm-keys:/etc/st2/keys:ro
+      - stackstorm-data:/mnt/samplesheet_processning:ro
   st2auth:
     image: ${ST2_IMAGE_REPO:-stackstorm/}st2auth:${ST2_VERSION:-latest}
     restart: on-failure
@@ -125,6 +126,7 @@ services:
       # templates) can reference secrets
       - stackstorm-keys:/etc/st2/keys:ro
       - ./scripts/snpseq/st2actionrunner-snpseq.sh:/st2actionrunner-snpseq.sh
+      - stackstorm-data:/mnt/samplesheet_processning:ro
     # Note: on some environments, there may be connectivity issues between containers.
     # In this case, try uncommenting the following line and restarting with docker-compose.
     # dns_search: .
@@ -216,6 +218,8 @@ services:
       - ./files/st2-cli.conf:/root/.st2/config
       - ./scripts/st2client-startup.sh:/st2client-startup.sh
       - ./scripts/snpseq/st2client-snpseq.sh:/st2client-snpseq.sh
+      - stackstorm-ssh:/home/stanley/.ssh
+      - stackstorm-data:/mnt/samplesheet_processning:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
   st2chatops:
@@ -267,7 +271,16 @@ services:
       - private
     volumes:
       - stackstorm-redis:/data
-
+  snpseq-tester:
+    build:
+      context: ../
+      dockerfile: st2-docker/files/Dockerfile.snpseq-tester
+    networks:
+      - private
+    volumes:
+      - "./files/nginx.snpseq-tester.conf:/etc/nginx/nginx.conf"
+      - stackstorm-data:/data
+      - stackstorm-ssh:/mnt/ssh
 volumes:
     stackstorm-mongodb:
     stackstorm-rabbitmq:
@@ -277,7 +290,7 @@ volumes:
     stackstorm-keys:
     stackstorm-virtualenvs:
     stackstorm-ssh:
-
+    stackstorm-data:
 networks:
   public:
     driver: bridge
