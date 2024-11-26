@@ -37,6 +37,7 @@ RUN \
   mkdir -p /data/labdata && \
   mkdir -p /data/scratch && \
   mkdir -p /data/uppmax_project/incoming/staging/reports && \
+  mkdir -p /data/uppmax_project/incoming/staging/test_runfolder/seqreports && \
   mkdir -p /data/snpseq-tester/runfolders/Arkiverade && \
   mkdir -p /data/olink && \
   mkdir -p /var/log/nginx/ && \
