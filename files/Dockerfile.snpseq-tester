@@ -37,6 +37,7 @@ RUN \
   mkdir -p /data/labdata && \
   mkdir -p /data/scratch && \
   mkdir -p /data/uppmax_project/incoming/staging/reports && \
+  mkdir -p /data/uppmax_project/incoming/staging/test_runfolder/seqreports && \
   mkdir -p /data/snpseq-tester/runfolders/Arkiverade && \
   mkdir -p /data/olink && \
   mkdir -p /var/log/nginx/ && \
@@ -68,5 +69,6 @@ RUN \
   chmod +x /root/start.sh
 
 EXPOSE 22 4444 8345 10400 10500 10600 10800 10900
+
 
 CMD ["/root/start.sh"]
