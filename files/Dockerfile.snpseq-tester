@@ -3,58 +3,58 @@ FROM nginx:latest
 COPY tests/test_data/runfolders /data/snpseq-tester/runfolders
 
 # set up ssh access
-RUN \
-  apt-get update && \
-  apt-get install -y openssh-server bash rsync && \
-  mkdir -p /mnt/ssh && \
-  mkdir -p /data && \
-  ssh-keygen -f /mnt/ssh/id_rsa && \
-  cat /mnt/ssh/id_rsa.pub > /mnt/ssh/authorized_keys && \
-  echo "snpseq-tester $(cat /etc/ssh/ssh_host_ecdsa_key.pub)" > /mnt/ssh/known_hosts && \
-  cp /mnt/ssh/id_rsa /mnt/ssh/stanley_rsa && \
-  cp /mnt/ssh/id_rsa.pub /mnt/ssh/stanley_rsa.pub && \
-  chmod 0600 /mnt/ssh/* && \
-  useradd -m -U arteria && \
-  useradd -m seqsum -g arteria && \
-  useradd -m funk_901 -g arteria && \
-  useradd -m stanley -g arteria && \
-  mkdir -p /home/arteria/.ssh && \
-  cp /mnt/ssh/* /home/arteria/.ssh/ && \
-  chown -R arteria:arteria /home/arteria/.ssh && \
-  cp -r /home/arteria/.ssh /home/seqsum/ && \
-  cp -r /home/arteria/.ssh /home/funk_901/ && \
-  cp -r /home/arteria/.ssh /home/stanley/ && \
-  chown -R seqsum:arteria /home/seqsum/.ssh && \
-  chown -R funk_901:arteria /home/funk_901/.ssh && \
-  chown -R stanley:arteria /home/stanley/.ssh
+RUN apt-get update
+RUN apt-get install -y openssh-server bash rsync
+RUN mkdir -p /mnt/ssh
+RUN mkdir -p /data
+RUN ssh-keygen -f /mnt/ssh/id_rsa
+RUN cat /mnt/ssh/id_rsa.pub > /mnt/ssh/authorized_keys
+RUN echo "snpseq-tester $(cat /etc/ssh/ssh_host_ecdsa_key.pub)" > /mnt/ssh/known_hosts
+RUN cp /mnt/ssh/id_rsa /mnt/ssh/stanley_rsa
+RUN cp /mnt/ssh/id_rsa.pub /mnt/ssh/stanley_rsa.pub
+RUN chmod 0600 /mnt/ssh/*
+RUN useradd -m -U arteria
+RUN useradd -m seqsum -g arteria
+RUN useradd -m funk_901 -g arteria
+RUN useradd -m stanley -g arteria
+RUN mkdir -p /home/arteria/.ssh
+RUN cp /mnt/ssh/* /home/arteria/.ssh/
+RUN chown -R arteria:arteria /home/arteria/.ssh
+RUN cp -r /home/arteria/.ssh /home/seqsum/
+RUN cp -r /home/arteria/.ssh /home/funk_901/
+RUN cp -r /home/arteria/.ssh /home/stanley/
+RUN chown -R seqsum:arteria /home/seqsum/.ssh
+RUN chown -R funk_901:arteria /home/funk_901/.ssh
+RUN chown -R stanley:arteria /home/stanley/.ssh
 
 # set up directories
-RUN \
-  mkdir -p /mnt/seqsummaries/test/2021 && \
-  mkdir -p /mnt/seqsummaries/test/LIMS-integration && \
-  mkdir -p /mnt/seqsummaries/test/ngi_reports && \
-  mkdir -p /mnt/samplesheet_processning && \
-  mkdir -p /data/labdata && \
-  mkdir -p /data/scratch && \
-  mkdir -p /data/uppmax_project/incoming/staging/reports && \
-  mkdir -p /data/uppmax_project/incoming/staging/test_runfolder/seqreports && \
-  mkdir -p /data/snpseq-tester/runfolders/Arkiverade && \
-  mkdir -p /data/olink && \
-  mkdir -p /var/log/nginx/ && \
-  mkdir -p /etc/arteria/misc/ && \
-  touch /var/log/nginx/access.log && \
-  echo '*' > /etc/arteria/misc/summary.rsync && \
-  echo '*' > /etc/arteria/misc/hiseq.rsync && \
-  bash -c 'find /data/snpseq-tester/runfolders -maxdepth 2 -name "*SampleSheet.csv" |while read f; do n=$(echo $(basename $(dirname $f)) |rev |cut -f1 -d_ |rev); n=${n:1}; cp $f /mnt/samplesheet_processning/${n}_samplesheet.csv; done' && \
-  bash -c 'find /data/snpseq-tester/runfolders -maxdepth 1 -type d |while read d; do n=$(basename $d); touch /data/scratch/$n; touch /data/snpseq-tester/runfolders/${n}_archive; done' && \
-  cp /mnt/samplesheet_processning/*.csv /data/ && \
-  ln -s /usr/bin/echo /usr/local/bin/projman_filler && \
-  chgrp -R arteria /mnt/samplesheet_processning && \
-  chgrp -R arteria /mnt/seqsummaries && \
-  chgrp -R arteria /data && \
-  chmod -R g+srwX /mnt/samplesheet_processning && \
-  chmod -R g+srwX /mnt/seqsummaries && \
-  chmod -R g+srwX /data
+RUN mkdir -p /mnt/seqsummaries/test/2021
+RUN mkdir -p /mnt/seqsummaries/test/LIMS-integration
+RUN mkdir -p /mnt/seqsummaries/test/ngi_reports
+RUN mkdir -p /mnt/samplesheet_processning
+RUN mkdir -p /data/labdata
+RUN mkdir -p /data/scratch
+RUN mkdir -p /data/uppmax_project/incoming/staging/reports
+RUN mkdir -p /data/uppmax_project/incoming/staging/test_runfolder/seqreports
+RUN mkdir -p /data/snpseq-tester/runfolders/Arkiverade
+RUN mkdir -p /data/olink
+RUN mkdir -p /var/log/nginx/
+RUN mkdir -p /etc/arteria/misc/
+RUN touch /var/log/nginx/access.log
+RUN echo '*' > /etc/arteria/misc/summary.rsync
+RUN echo '*' > /etc/arteria/misc/hiseq.rsync
+RUN echo '*' > /etc/arteria/misc/olink_explore.rsync
+RUN bash -c 'find /data/snpseq-tester/runfolders -maxdepth 2 -name "*SampleSheet.csv" |while read f; do n=$(echo $(basename $(dirname $f)) |rev |cut -f1 -d_ |rev); n=${n:1}; cp $f /mnt/samplesheet_processning/${n}_samplesheet.csv; done'
+RUN bash -c 'find /data/snpseq-tester/runfolders -maxdepth 1 -type d -name "*A00001*" |while read d; do n=$(basename $d); touch /data/scratch/$n; touch /data/snpseq-tester/runfolders/${n}_archive; done'
+RUN cp /mnt/samplesheet_processning/*.csv /data/
+RUN ln -s /usr/bin/echo /usr/local/bin/projman_filler
+RUN ln -s /usr/bin/echo /usr/local/bin/ngs2counts
+RUN chgrp -R arteria /mnt/samplesheet_processning
+RUN chgrp -R arteria /mnt/seqsummaries
+RUN chgrp -R arteria /data
+RUN chmod -R g+srwX /mnt/samplesheet_processning
+RUN chmod -R g+srwX /mnt/seqsummaries
+RUN chmod -R g+srwX /data
 
 # set up start script
 RUN \
@@ -62,7 +62,6 @@ RUN \
     "#! /usr/bin/env bash\n%s\n%s\n%s\n%s\n%s\n" \
       'service ssh start' \
       'service nginx start' \
-      'mv /data/snpseq-tester/runfolders/Arkiverade/* /data/snpseq-tester/runfolders/ || echo ""' \
       'find /data/snpseq-tester/runfolders -maxdepth 1 -type d |while read d; do n=$(basename $d); touch /data/scratch/$n; done' \
       'tail -f /var/log/nginx/access.log' \
       > /root/start.sh && \
