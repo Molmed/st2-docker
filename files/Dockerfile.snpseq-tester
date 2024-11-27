@@ -47,6 +47,7 @@ RUN bash -c 'find /data/snpseq-tester/runfolders -maxdepth 2 -name "*SampleSheet
 RUN bash -c 'find /data/snpseq-tester/runfolders -maxdepth 1 -type d |while read d; do n=$(basename $d); touch /data/scratch/$n; touch /data/snpseq-tester/runfolders/${n}_archive; done'
 RUN cp /mnt/samplesheet_processning/*.csv /data/
 RUN ln -s /usr/bin/echo /usr/local/bin/projman_filler
+RUN ln -s /usr/bin/echo /usr/local/bin/ngs2counts
 RUN chgrp -R arteria /mnt/samplesheet_processning
 RUN chgrp -R arteria /mnt/seqsummaries
 RUN chgrp -R arteria /data
