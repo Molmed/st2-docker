@@ -32,3 +32,9 @@ st2ctl reload --register-configs
 # create the known_hosts file and add the snpseq-tester host key
 ssh-keyscan -t ecdsa snpseq-tester >> /home/stanley/.ssh/known_hosts
 chown -R stanley:stanley /home/stanley/.ssh
+
+# Make git trust the repo
+git config --global --add safe.directory /opt/stackstorm/packs.dev
+
+# Create version file based on latest commit
+cd /opt/stackstorm/packs/snpseq_packs && git log -1 --pretty=format:"%H" > version.txt
