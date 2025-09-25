@@ -19,7 +19,7 @@ Open `http://localhost/` in your browser. StackStorm Username/Password by defaul
 ### Prerequisites
 
 - [Docker Engine](https://www.docker.com/products/container-runtime) 20.04+
-- [Docker Compose](https://docs.docker.com/compose/install) 1.12+
+- [Docker Compose](https://docs.docker.com/compose/install) 2+
 
 ### Compose Configuration
 
