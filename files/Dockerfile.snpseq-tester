@@ -50,7 +50,7 @@ RUN touch /var/log/nginx/access.log
 RUN echo '*' > /etc/arteria/misc/summary.rsync
 RUN echo '*' > /etc/arteria/misc/hiseq.rsync
 RUN echo '*' > /etc/arteria/misc/olink_explore.rsync
-RUN bash -c 'find /data/snpseq-tester/runfolders -maxdepth 2 -name "*SampleSheet.csv" |while read f; do n=$(echo $(basename $(dirname $f)) |rev |cut -f1 -d_ |rev); n=${n:1}; cp $f /mnt/samplesheet_processning/${n}_samplesheet.csv; done'
+RUN bash -c 'find /data/snpseq-tester/runfolders -maxdepth 2 -name "*SampleSheet.csv" |while read f; do n=$(echo $(basename $(dirname $f)) |rev |cut -f1 -d_ |rev); n=${n:1}; cp $f /mnt/samplesheet_processning/bcl2fastq_${n}_samplesheet.csv; done'
 RUN bash -c 'find /data/snpseq-tester/runfolders -maxdepth 1 -type d -name "*A00001*" |while read d; do n=$(basename $d); touch /data/scratch/$n; touch /data/snpseq-tester/runfolders/${n}_archive; done'
 RUN cp /mnt/samplesheet_processning/*.csv /data/
 RUN ln -s /usr/bin/echo /usr/local/bin/projman_filler
